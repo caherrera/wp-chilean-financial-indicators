@@ -6,27 +6,19 @@
  * Time: 12:04 PM
  */
 
-class WP_Widget_Chilean_Weather_Indicators extends WP_Widget
+class WP_Widget_Chilean_Indicators extends WP_Widget
 {
-    public function __construct() {
+    public $apiUrl = 'http://www.mindicador.cl/api';
 
-        parent::__construct(
-            'chilean-weather-indicators', //ID
-            'Chilean Weather Indicators', //Nombre
-            array(
-                'classname' => 'widget_chilean_weather_indicators',
-                'description' => ''
-            )
-        );
-    }
-
-    public function update( $new_instance, $old_instance ) {
+    public function update($new_instance, $old_instance)
+    {
         return $new_instance;
     }
 
     public function widget($args, $instance)
     {
-        echo 'hola';
+        $data=$this->fetch();
+        echo json_encode($data);
     }
 
     public function form($instance)
@@ -50,10 +42,27 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget
 
     }
 
-    public function sync() {
-        
+    public function fetch()
+    {
 
-        if ( ini_get('allow_url_fopen') ) {
+        $today     = date('Y-m-d');
+        $cacheFile = dirname(dirname(__FILE__)) . '/cache/' . __CLASS__ . '.'.$today.'.cache';
+        if (file_exists($cacheFile)) {
+            return json_decode(file_get_contents($cacheFile));
+        }
+        $response = $this->sync($this->apiUrl);
+        file_put_contents($cacheFile, $response);
+
+        return json_decode($response);
+
+
+    }
+
+    public function sync($apiUrl)
+    {
+
+
+        if (ini_get('allow_url_fopen')) {
             $json = file_get_contents($apiUrl);
         } else {
             // De otra forma utilizamos cURL
@@ -63,5 +72,8 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget
             curl_close($curl);
         }
 
+        return $json;
     }
+
+
 }
