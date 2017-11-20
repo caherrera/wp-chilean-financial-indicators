@@ -32,17 +32,22 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
     {
 
         $cacheFile = $this->getCacheFile();
-        if ( ! is_dir(dirname($cacheFile))) {
-            mkdir(dirname($cacheFile));
-        }
-        if (file_exists($cacheFile)) {
-            $cache = file_get_contents($cacheFile);
-            if ($cache) {
-                return json_decode($cache);
+        if ($cacheFile) {
+            if ( ! is_dir(dirname($cacheFile))) {
+                nicedebug($cacheFile, false, true, true);
+                mkdir(dirname($cacheFile));
+            }
+            if (file_exists($cacheFile)) {
+                $cache = file_get_contents($cacheFile);
+                if ($cache) {
+                    return json_decode($cache);
+                }
             }
         }
         $response = $this->sync($this->apiUrl);
-        file_put_contents($cacheFile, $response);
+        if ($cacheFile) {
+            file_put_contents($cacheFile, $response);
+        }
 
         return json_decode($response);
 
