@@ -29,12 +29,16 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators
 
     public function getCacheFile()
     {
-        parent::getCacheFile(_truncate_post_slug($this->city));
+        preg_match("/(.+), (.+)/", $this->city, $match);
+        $sufix = $match[2] . '_' . $match[1];
+
+        return parent::getCacheFile($sufix);
     }
 
     public function widget($args, $instance)
     {
-        $this->apiUrl = sprintf($this->apiUrl, $this->city, $instance['api']?:'631bfe41f6f68a1642e75ded0751ec31', $instance['lang']?:'es');
+        $this->apiUrl = sprintf($this->apiUrl, $this->city, $instance['api'] ?: '631bfe41f6f68a1642e75ded0751ec31',
+            $instance['lang'] ?: 'es');
         echo '<div class="WP_Widget_Chilean_Indicators WP_Widget_Chilean_Weather_Indicators">';
         echo '<ul>';
         echo $this->printWeather();
