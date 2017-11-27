@@ -27,7 +27,7 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators
         );
     }
 
-    public function getCacheFile()
+    public function getCacheFile($sufix = '')
     {
         preg_match("/(.+), (.+)/", $this->city, $match);
         $sufix = $match[2] . '_' . $match[1];
