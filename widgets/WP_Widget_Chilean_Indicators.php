@@ -8,7 +8,7 @@
 
 class WP_Widget_Chilean_Indicators extends WP_Widget
 {
-    public $apiUrl = 'http://www.mindicador.cl/api';
+    public $apiUrl = 'http://indicadoresdeldia.cl/webservice/indicadores.json';
     public $data = null;
 
     public function __construct($id_base, $name, array $widget_options = array(), array $control_options = array())

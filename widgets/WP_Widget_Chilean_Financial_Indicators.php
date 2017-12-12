@@ -8,7 +8,7 @@
 
 class WP_Widget_Chilean_Financial_Indicators extends WP_Widget_Chilean_Indicators
 {
-    public $apiUrl = 'http://www.mindicador.cl/api';
+    public $apiUrl = 'http://indicadoresdeldia.cl/webservice/indicadores.json';
 
     public function __construct()
     {
@@ -39,7 +39,7 @@ class WP_Widget_Chilean_Financial_Indicators extends WP_Widget_Chilean_Indicator
     {
         $key   = 'uf';
         $label = 'uf';
-        $value = money_format("%n", $this->data()->uf->valor);
+        $value = money_format("%n", $this->data()->indicador->uf);
 
         return $this->printValue($key, $value, $label);
     }
@@ -50,7 +50,7 @@ class WP_Widget_Chilean_Financial_Indicators extends WP_Widget_Chilean_Indicator
         $key   = 'dolar';
         $label = 'Dolar OBS.';
 
-        $value = money_format("%n", $this->data()->dolar->valor);
+        $value = money_format("%n", $this->data()->moneda->dolar);
 
         return $this->printValue($key, $value, $label);
 
