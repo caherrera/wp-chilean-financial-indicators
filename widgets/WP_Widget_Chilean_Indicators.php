@@ -114,7 +114,7 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
             $this->get_field_id('title'),
             $this->get_field_name('title'),
             esc_attr($title));
-        FORM;
+
 
 
     }
