@@ -34,7 +34,6 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
         $cacheFile = $this->getCacheFile();
         if ($cacheFile) {
             if ( ! is_dir(dirname($cacheFile))) {
-                nicedebug($cacheFile, false, true, true);
                 mkdir(dirname($cacheFile));
             }
             if (file_exists($cacheFile)) {
