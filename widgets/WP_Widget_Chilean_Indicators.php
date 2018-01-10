@@ -69,17 +69,17 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
     /**
      * @return string
      */
-    public function sync()
+    public function sync($apiUrl = false)
     {
-
-        if ( ! $this->apiUrl) {
+        $apiUrl = $apiUrl ?: $this->apiUrl;
+        if ( ! $apiUrl) {
             return '';
         }
         if (ini_get('allow_url_fopen')) {
-            $json = file_get_contents($this->apiUrl);
+            $json = file_get_contents($apiUrl);
         } else {
             // De otra forma utilizamos cURL
-            $curl = curl_init($this->apiUrl);
+            $curl = curl_init($apiUrl);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             $json = curl_exec($curl);
             curl_close($curl);
@@ -113,7 +113,6 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
             $this->get_field_id('title'),
             $this->get_field_name('title'),
             esc_attr($title));
-
 
 
     }
