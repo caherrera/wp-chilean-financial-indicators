@@ -14,7 +14,7 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators
     public function __construct()
     {
 
-        $this->city = function_exists('bp_get_profile_field_data')&&bp_get_profile_field_data(array(
+        $this->city = function_exists('bp_get_profile_field_data') && bp_get_profile_field_data(array(
             'field'   => 'Location',
             'user_id' => get_current_user_id()
         )) ?: 'Santiago, Chile';
@@ -31,7 +31,7 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators
     public function getCacheFile($sufix = '')
     {
         preg_match("/(.+), (.+)/", $this->city, $match);
-        $sufix = $match[2] . '_' . $match[1];
+        $sufix = date('G') . '_' . $match[2] . '_' . $match[1];
 
         return parent::getCacheFile($sufix);
     }
