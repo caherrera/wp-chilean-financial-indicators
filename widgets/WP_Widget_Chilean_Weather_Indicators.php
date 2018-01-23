@@ -28,12 +28,12 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators
         );
     }
 
-    public function getCacheFile($sufix = '')
+    public function getCacheKey($sufix = '')
     {
         preg_match("/(.+), (.+)/", $this->city, $match);
-        $sufix = date('G') . '_' . $match[2] . '_' . $match[1];
+        $sufix = $match[2] . '_' . $match[1] . '_' .$sufix;
 
-        return parent::getCacheFile($sufix);
+        return $sufix;
     }
 
     public function widget($args, $instance)

@@ -30,41 +30,47 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
 
     public function fetch()
     {
+        if ($cache = wp_cache_get($key = $this->getCacheKey(), $group = get_class($this))) {
+            return $cache;
+        } else {
+            $cache = json_decode($this->sync($this->apiUrl));
+            wp_cache_set($key, $cache, $group, 3600);
 
-        $cacheFile = $this->getCacheFile();
-        if ($cacheFile) {
-            if ( ! is_dir(dirname($cacheFile))) {
-                mkdir(dirname($cacheFile));
-            }
-            if (file_exists($cacheFile)) {
-                $cache = file_get_contents($cacheFile);
-                if ($cache) {
-                    return json_decode($cache);
-                }
-            }
+            return $cache;
         }
-        $response = $this->sync($this->apiUrl);
-        if ($cacheFile) {
-            file_put_contents($cacheFile, $response);
-        }
-
-        return json_decode($response);
-
 
     }
 
-    public function getCacheFile($sufix = '')
+    public function getCacheKey($sufix = '')
     {
-        $today    = date('Y-m-d');
-        $filename = [__CLASS__, $today];
-        if ($sufix) {
-            $filename[] = $sufix;
-        }
-        $filename[] = 'cache';
-        $cacheFile  = dirname(dirname(__FILE__)) . '/cache/' . implode('.', $filename);
-
-        return $cacheFile;
+        return $sufix;
     }
+
+//    public function fetchOld()
+//    {
+//
+//        $cacheFile = $this->getCacheFile();
+//        if ($cacheFile) {
+//            if ( ! is_dir(dirname($cacheFile))) {
+//                mkdir(dirname($cacheFile));
+//            }
+//            if (file_exists($cacheFile)) {
+//                $cache = file_get_contents($cacheFile);
+//                if ($cache) {
+//                    return json_decode($cache);
+//                }
+//            }
+//        }
+//        $response = $this->sync($this->apiUrl);
+//        if ($cacheFile) {
+//            file_put_contents($cacheFile, $response);
+//        }
+//
+//
+//        return json_decode($response);
+//
+//
+//    }
 
     /**
      * @return string
@@ -86,6 +92,11 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
         }
 
         return $json;
+    }
+
+    public function getCacheName($sufix = '')
+    {
+        return __CLASS__ . '_' . $sufix;
     }
 
     public function data()
