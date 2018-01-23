@@ -10,6 +10,7 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
 {
     public $apiUrl = 'http://indicadoresdeldia.cl/webservice/indicadores.json';
     public $data = null;
+    public $expire = 86400;
 
     public function __construct($id_base, $name, array $widget_options = array(), array $control_options = array())
     {
@@ -34,7 +35,7 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
             return $cache;
         } else {
             $cache = json_decode($this->sync($this->apiUrl));
-            wp_cache_set($key, $cache, $group, 3600);
+            wp_cache_set($key, $cache, $group, $this->expire);
 
             return $cache;
         }
@@ -81,14 +82,18 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
         if ( ! $apiUrl) {
             return '';
         }
-        if (ini_get('allow_url_fopen')) {
-            $json = file_get_contents($apiUrl);
-        } else {
-            // De otra forma utilizamos cURL
-            $curl = curl_init($apiUrl);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            $json = curl_exec($curl);
-            curl_close($curl);
+        try {
+            if (ini_get('allow_url_fopen')) {
+                $json = @file_get_contents($apiUrl);
+            } else {
+                // De otra forma utilizamos cURL
+                $curl = curl_init($apiUrl);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                $json = curl_exec($curl);
+                curl_close($curl);
+            }
+        } catch (Exception $e) {
+            return '';
         }
 
         return $json;

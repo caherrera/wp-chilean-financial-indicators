@@ -32,11 +32,12 @@ class WP_Widget_Chilean_Financial_Indicators extends WP_Widget_Chilean_Indicator
 
     public function widget($args, $instance)
     {
-        if (!isset($instance['apikey']) || !$instance['apikey']) {
+        if ( ! isset($instance['apikey']) || ! $instance['apikey']) {
             new WP_Error('sbif apikey missing');
+
             return;
         }
-        $this->apiKey=$instance['apikey'];
+        $this->apiKey = $instance['apikey'];
         echo '<div class="WP_Widget_Chilean_Indicators WP_Widget_Chilean_Financial_Indicators">';
         echo '<ul>';
         echo $this->printUF();
@@ -63,7 +64,7 @@ class WP_Widget_Chilean_Financial_Indicators extends WP_Widget_Chilean_Indicator
         $label = 'Dolar OBS.';
 
 //        $value = money_format("%n", (float)$this->data()->moneda->dolar);
-        $value=$this->data()->moneda->dolar;
+        $value = $this->data()->moneda->dolar;
 
         return $this->printValue($key, $value, $label);
 
@@ -94,19 +95,29 @@ class WP_Widget_Chilean_Financial_Indicators extends WP_Widget_Chilean_Indicator
 
     public function sync($apiUrl = false)
     {
-        $apiUrl=$apiUrl?:$this->apiUrl;
-        $apiUrl=str_ireplace("[apikey]",$this->apiKey,$apiUrl);
-        $uf=parent::sync(str_ireplace('[recurso]','uf',$apiUrl));
-        if ($uf){
-            $uf=json_decode($uf);
-            $uf=current($uf->UFs);
-            $uf=$uf->Valor;
+        $apiUrl = $apiUrl ?: $this->apiUrl;
+        $apiUrl = str_ireplace("[apikey]", $this->apiKey, $apiUrl);
+        $uf     = parent::sync(str_ireplace('[recurso]', 'uf', $apiUrl));
+        if ($uf) {
+            $uf = json_decode($uf);
+            $uf = current($uf->UFs);
+            $uf = $uf->Valor;
+        } else {
+            $uf = parent::sync('https://mindicador.cl/api/uf');
+            $uf = json_decode($uf);
+            $uf = current($uf->serie);
+            $uf = $uf->valor;
         }
-        $dolar=parent::sync(str_ireplace('[recurso]','dolar',$apiUrl));
+        $dolar = parent::sync(str_ireplace('[recurso]', 'dolar', $apiUrl));
         if ($dolar) {
-            $dolar=json_decode($dolar);
-            $dolar=current($dolar->Dolares);
-            $dolar=$dolar->Valor;
+            $dolar = json_decode($dolar);
+            $dolar = current($dolar->Dolares);
+            $dolar = $dolar->Valor;
+        } else {
+            $dolar = parent::sync('https://mindicador.cl/api/dolar');
+            $dolar = json_decode($dolar);
+            $dolar = current($dolar->serie);
+            $dolar = $dolar->valor;
         }
 
         return json_encode(['indicadores' => ['uf' => $uf], 'moneda' => ['dolar' => $dolar]]);

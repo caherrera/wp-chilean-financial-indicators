@@ -10,6 +10,7 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators
 {
     public $apiUrl = 'http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&units=metric&lang=%s';
     public $city;
+    public $expire = 3600;
 
     public function __construct()
     {
@@ -31,7 +32,7 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators
     public function getCacheKey($sufix = '')
     {
         preg_match("/(.+), (.+)/", $this->city, $match);
-        $sufix = $match[2] . '_' . $match[1] . '_' .$sufix;
+        $sufix = $match[2] . '_' . $match[1] . '_' . $sufix;
 
         return $sufix;
     }
