@@ -47,31 +47,6 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
         return $sufix;
     }
 
-//    public function fetchOld()
-//    {
-//
-//        $cacheFile = $this->getCacheFile();
-//        if ($cacheFile) {
-//            if ( ! is_dir(dirname($cacheFile))) {
-//                mkdir(dirname($cacheFile));
-//            }
-//            if (file_exists($cacheFile)) {
-//                $cache = file_get_contents($cacheFile);
-//                if ($cache) {
-//                    return json_decode($cache);
-//                }
-//            }
-//        }
-//        $response = $this->sync($this->apiUrl);
-//        if ($cacheFile) {
-//            file_put_contents($cacheFile, $response);
-//        }
-//
-//
-//        return json_decode($response);
-//
-//
-//    }
 
     /**
      * @return string
@@ -97,11 +72,6 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
         }
 
         return $json;
-    }
-
-    public function getCacheName($sufix = '')
-    {
-        return __CLASS__ . '_' . $sufix;
     }
 
     public function data()
@@ -144,6 +114,23 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
     {
 
         return sprintf("<li class=\"%s\"><span class=\"unit\">%s</span> %s</li>", $key, $label, $value);
+    }
+
+    public function formInput($instance=[],$key,$title='',$description='',$default='',$class='widefat'){
+	    if ( isset( $instance[$key] ) ) {
+		    $value = $instance[$key];
+	    } else {
+		    $value = $default;
+	    }
+	    return sprintf( '<p>'
+	                  . '<label for="%s">%s</label>'
+	                  . '<input class="'.$class.'" id="%s" name="%s" type="text" value="%s" />'
+	                  . $description.'</p>',
+		    $this->get_field_id( $key ),
+		    _e( $title?:$key ),
+		    $this->get_field_id( $key ),
+		    $this->get_field_name( $key ),
+		    esc_attr( $value ) );
     }
 
 
