@@ -6,32 +6,35 @@
  * Time: 12:04 PM
  */
 
-class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators {
-	public $apiUrl = 'http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&units=metric&lang=%s';
-	public $city;
+class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators
+{
+    public $apiUrl = 'http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&units=metric&lang=%s';
+    public $city;
+	public $expire = 3600;
 
-	public function __construct() {
+    public function __construct()
+    {
 
-		$this->city = function_exists( 'bp_get_profile_field_data' ) && bp_get_profile_field_data( array(
-			'field'   => 'Location',
-			'user_id' => get_current_user_id()
-		) ) ?: 'Santiago, Chile';
-		parent::__construct(
-			'chilean-weather-indicators', //ID
-			'Chilean Weather Indicators', //Nombre
-			array(
-				'classname'   => 'widget_chilean_weather_indicators',
-				'description' => ''
-			)
-		);
-	}
+        $this->city = function_exists('bp_get_profile_field_data') && bp_get_profile_field_data(array(
+            'field'   => 'Location',
+            'user_id' => get_current_user_id()
+        )) ?: 'Santiago, Chile';
+        parent::__construct(
+            'chilean-weather-indicators', //ID
+            'Chilean Weather Indicators', //Nombre
+            array(
+                'classname'   => 'widget_chilean_weather_indicators',
+                'description' => ''
+            )
+        );
+    }
 
 	public function getCacheKey( $sufix = '' ) {
 		preg_match( "/(.+), (.+)/", $this->city, $match );
 		$sufix = $match[2] . '_' . $match[1] . '_' . $sufix;
 
-		return $sufix;
-	}
+        return $sufix;
+    }
 
 	public function widget( $args, $instance ) {
 		if ( isset( $instance['apikey'] ) && $instance['apikey'] ) {
