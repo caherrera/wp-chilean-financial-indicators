@@ -7,16 +7,16 @@
  */
 
 class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators {
-	public $apiUrl = 'http://api.openweathermap.org/data/2.5/weather?appid=%s&units=metric&lang=%s';
+	public $apiUrl = 'http://api.openweathermap.org/data/2.5/weather?appid=%s&units=metric&lang=%s&%s';
 	public $city;
-	public $expire = 3600;
+	public $expire = 0;
 
 	public function __construct() {
 
 		$this->city = function_exists( 'bp_get_profile_field_data' ) && bp_get_profile_field_data( array(
 			'field'   => 'Location',
 			'user_id' => get_current_user_id()
-		) ) ?: 'Santiago, Chile';
+		) ) ?: null;
 		parent::__construct(
 			'chilean-weather-indicators', //ID
 			'Chilean Weather Indicators', //Nombre
@@ -27,37 +27,42 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators 
 		);
 	}
 
-	public function getCacheKey( $sufix = '' ) {
-		preg_match( "/(.+), (.+)/", $this->city, $match );
-		$sufix = $match[2] . '_' . $match[1] . '_' . $sufix;
-
-		return $sufix;
-	}
 
 	public function widget( $args, $instance ) {
+		$this->instance = $instance;
+		if ( ! isset( $instance['apikey'] ) || ! $instance['apikey'] ) {
+			new WP_Error( 'apikey missing' );
 
-		if ( isset( $instance['apikey'] ) && $instance['apikey'] ) {
-			if ( isset( $instance['lang'] ) && $instance['lang'] ) {$lang=$instance['lang'];}else{$lang='es';}
-			if ($this->city) {
-				$q='&q='.$this->city;
-			}elseif ( isset( $instance['city'] ) && $instance['city'] ) {
-				$q='&q=' . $instance['city'];
-			}else{
-				if ( isset( $instance['lat'] ) && $instance['lat'] ) {$q='&lat=' . $instance['lat'];}
-				if ( isset( $instance['lon'] ) && $instance['lon'] ) {$q='&lon=' . $instance['lon'];}
+			return;
+		} else {
+
+			if ( isset( $instance['lang'] ) && $instance['lang'] ) {
+				$lang = $instance['lang'];
+			} else {
+				$lang = 'es';
+			}
+			if ( $this->city ) {
+				$q = 'q=' . $this->city;
+			} elseif ( isset( $instance['city'] ) && $instance['city'] ) {
+				$q = 'q=' . $instance['city'];
+			} else {
+				if ( isset( $instance['lat'] ) && $instance['lat'] &&
+				     isset( $instance['lon'] ) && $instance['lon'] ) {
+					$q = 'lat=' . $instance['lat'] . '&lon=' . $instance['lon'];
+				} else {
+					$q = 'q=Santiago, Chile';
+				}
 			}
 
 			$this->apiUrl = sprintf( $this->apiUrl,
 				$instance['apikey'],
 				$lang,
-				$q);
+				$q );
 			echo '<div class="WP_Widget_Chilean_Indicators WP_Widget_Chilean_Weather_Indicators">';
 			echo '<ul>';
 			echo $this->printWeather();
 			echo '</ul>';
 			echo '</div>';
-		} else {
-			echo "You must set up your widget";
 		}
 
 
@@ -65,7 +70,7 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators 
 
 	public function printWeather() {
 		$key   = 'weather';
-		$label = $this->city;
+		$label = $this->instance['title'];
 		$value = ',' . $this->data()->main->temp . '°C ' . $this->data()->weather[0]->description;
 
 		return $this->printValue( $key, $value, $label );
@@ -73,20 +78,21 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators 
 
 	public function form( $instance ) {
 		parent::form( $instance );
-		echo $this->formInput($instance
-			,'apikey'
-			,'Apikey de openweathermap.org:'
-			,'Para usar este Widget necesitas una apikey de openweathermap.org<br><a href="http://openweathermap.org" target="_blank">openweathermap.org</a>'
+		echo $this->formInput( $instance
+			, 'apikey'
+			, 'Apikey de openweathermap.org:'
+			,
+			'Para usar este Widget necesitas una apikey de openweathermap.org<br><a href="http://openweathermap.org" target="_blank">openweathermap.org</a>'
 
 		);
 		echo '<hr>';
-		if (function_exists( 'bp_get_profile_field_data' )) {
+		if ( $this->city ) {
 			echo '<p><strong>Usando Perfil extendido de BuddyPress. Crea un campo location para usar este widget</strong></p>';
-		}else {
+		} else {
 			echo $this->formInput( $instance
 				, 'city'
 				, 'Ciudad'
-				, 'Si elijes escribir una ciudad se considerará por sobre latitud y longitud'
+				, 'Si elijes escribir una latitud y longitud se usará por sobre la ciudad'
 			);
 			echo $this->formInput( $instance
 				, 'lat'

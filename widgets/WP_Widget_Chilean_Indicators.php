@@ -10,7 +10,8 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
 {
     public $apiUrl = 'http://indicadoresdeldia.cl/webservice/indicadores.json';
     public $data = null;
-    public $expire = 86400;
+    public $expire = 0;
+    public $instance;
 
     public function __construct($id_base, $name, array $widget_options = array(), array $control_options = array())
     {
@@ -25,6 +26,7 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
 
     public function widget($args, $instance)
     {
+    	$this->instance=$instance;
         $data = $this->fetch();
         echo json_encode($data);
     }
@@ -42,10 +44,12 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
 
     }
 
-    public function getCacheKey($sufix = '')
-    {
-        return $sufix;
-    }
+	public function getCacheKey() {
+
+		$json = json_encode( $this->instance );
+
+		return md5( $json );
+	}
 
 
     /**
@@ -85,20 +89,14 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
 
     public function form($instance)
     {
-        if (isset($instance['title'])) {
-            $title = $instance['title'];
-        } else {
-            $title = __('New title', WP_Chilean_Financial_Indicators::DOMAIN);
-        }
-        echo sprintf('<p>'
-                     . '<label for="%s">%s</label>'
-                     . '<input class="widefat" id="%s" name="%s" type="text" value="%s" />'
-                     . '</p>',
-            $this->get_field_id('title'),
-            _e('Title:'),
-            $this->get_field_id('title'),
-            $this->get_field_name('title'),
-            esc_attr($title));
+    	echo '<p>&nbsp;</p>';
+	    echo $this->formInput($instance
+		    ,'title'
+		    ,'New Title:'
+
+
+	    );
+
 
 
     }
@@ -123,7 +121,7 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
 		    $value = $default;
 	    }
 	    return sprintf( '<p>'
-	                  . '<label for="%s">%s</label>'
+	                  . '<label for="%s"><strong>%s</strong></label>'
 	                  . '<input class="'.$class.'" id="%s" name="%s" type="text" value="%s" />'
 	                  . $description.'</p>',
 		    $this->get_field_id( $key ),
