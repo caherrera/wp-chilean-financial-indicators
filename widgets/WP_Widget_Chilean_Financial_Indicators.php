@@ -48,7 +48,7 @@ class WP_Widget_Chilean_Financial_Indicators extends WP_Widget_Chilean_Indicator
 	public function printUF() {
 		$key   = 'uf';
 		$label = 'uf';
-		$value = $this->data()->indicadores->uf;
+		$value = $this->data()->uf;
 
 		return $this->printValue( $key, $value, $label );
 	}
