@@ -9,8 +9,10 @@
 class WP_Widget_Chilean_Financial_Indicators extends WP_Widget_Chilean_Indicators
 {
     public $apiUrl = 'http://api.sbif.cl/api-sbifv3/recursos_api/[recurso]?apikey=[apikey]&formato=json';
+	public $expire = 86400;
 
-    /**
+
+	/**
      * @link http://api.sbif.cl/uso-de-api-key.html
      * @var string
      */
@@ -32,11 +34,7 @@ class WP_Widget_Chilean_Financial_Indicators extends WP_Widget_Chilean_Indicator
 
     public function widget($args, $instance)
     {
-        if ( ! isset($instance['apikey']) || ! $instance['apikey']) {
-            new WP_Error('sbif apikey missing');
-
-            return;
-        }
+	    $instance = wp_parse_args( $instance, [ 'apikey' => '' ] );
         $this->apiKey = $instance['apikey'];
         echo '<div class="WP_Widget_Chilean_Indicators WP_Widget_Chilean_Financial_Indicators">';
         echo '<ul>';
@@ -47,24 +45,18 @@ class WP_Widget_Chilean_Financial_Indicators extends WP_Widget_Chilean_Indicator
 
     }
 
-    public function printUF()
-    {
-        $key   = 'uf';
-        $label = 'uf';
-        $value = $this->data()->uf;
-//        $value = str_ireplace()
-        $value = '$ ' . number_format($value,2,',','.');
+	public function printUF() {
+		$key   = 'uf';
+		$label = 'uf';
+		$value = $this->data()->indicadores->uf;
 
-        return $this->printValue($key, $value, $label);
-    }
+		return $this->printValue( $key, $value, $label );
+	}
 
 
-    public function printDollar()
-    {
-        $key   = 'dolar';
-        $label = 'Dolar OBS.';
-
-//        $value = money_format("%n", (float)$this->data()->moneda->dolar);
+	public function printDollar() {
+		$key   = 'dolar';
+		$label = 'Dolar OBS.';
         $value = $this->data()->dolar;
 
         return $this->printValue($key, $value, $label);
@@ -75,11 +67,9 @@ class WP_Widget_Chilean_Financial_Indicators extends WP_Widget_Chilean_Indicator
     {
         parent::form($instance);
 
-        if (isset($instance['apikey'])) {
-            $apikey = $instance['apikey'];
-        } else {
-            $apikey = '';
-        }
+	    $instance = wp_parse_args( $instance, [ 'apikey' => '' ] );
+	    $this->apiKey = $instance['apikey'];
+
         echo sprintf('<p>'
                      . '<label for="%s">%s</label>'
                      . '<input class="widefat" id="%s" name="%s" type="text" value="%s" />'
@@ -89,7 +79,7 @@ class WP_Widget_Chilean_Financial_Indicators extends WP_Widget_Chilean_Indicator
             _e('apikey de SBIF:'),
             $this->get_field_id('apikey'),
             $this->get_field_name('apikey'),
-            esc_attr($apikey));
+            esc_attr($this->apiKey));
 
 
     }

@@ -10,7 +10,8 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
 {
     public $apiUrl = 'http://indicadoresdeldia.cl/webservice/indicadores.json';
     public $data = null;
-    public $expire = 86400;
+    public $expire = 0;
+    public $instance;
 
     public function __construct($id_base, $name, array $widget_options = array(), array $control_options = array())
     {
@@ -25,6 +26,7 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
 
     public function widget($args, $instance)
     {
+    	$this->instance=$instance;
         $data = $this->fetch();
         echo json_encode($data);
     }
@@ -42,36 +44,13 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
 
     }
 
-    public function getCacheKey($sufix = '')
-    {
-        return $sufix;
-    }
+	public function getCacheKey() {
 
-//    public function fetchOld()
-//    {
-//
-//        $cacheFile = $this->getCacheFile();
-//        if ($cacheFile) {
-//            if ( ! is_dir(dirname($cacheFile))) {
-//                mkdir(dirname($cacheFile));
-//            }
-//            if (file_exists($cacheFile)) {
-//                $cache = file_get_contents($cacheFile);
-//                if ($cache) {
-//                    return json_decode($cache);
-//                }
-//            }
-//        }
-//        $response = $this->sync($this->apiUrl);
-//        if ($cacheFile) {
-//            file_put_contents($cacheFile, $response);
-//        }
-//
-//
-//        return json_decode($response);
-//
-//
-//    }
+		$json = json_encode( $this->instance );
+
+		return md5( $json );
+	}
+
 
     /**
      * @return string
@@ -99,11 +78,6 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
         return $json;
     }
 
-    public function getCacheName($sufix = '')
-    {
-        return __CLASS__ . '_' . $sufix;
-    }
-
     public function data()
     {
         if ( ! $this->data) {
@@ -115,20 +89,14 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
 
     public function form($instance)
     {
-        if (isset($instance['title'])) {
-            $title = $instance['title'];
-        } else {
-            $title = __('New title', WP_Chilean_Financial_Indicators::DOMAIN);
-        }
-        echo sprintf('<p>'
-                     . '<label for="%s">%s</label>'
-                     . '<input class="widefat" id="%s" name="%s" type="text" value="%s" />'
-                     . '</p>',
-            $this->get_field_id('title'),
-            _e('Title:'),
-            $this->get_field_id('title'),
-            $this->get_field_name('title'),
-            esc_attr($title));
+    	echo '<p>&nbsp;</p>';
+	    echo $this->formInput($instance
+		    ,'title'
+		    ,'New Title:'
+
+
+	    );
+
 
 
     }
@@ -144,6 +112,23 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
     {
 
         return sprintf("<li class=\"%s\"><span class=\"unit\">%s</span> %s</li>", $key, $label, $value);
+    }
+
+    public function formInput($instance=[],$key,$title='',$description='',$default='',$class='widefat'){
+	    if ( isset( $instance[$key] ) ) {
+		    $value = $instance[$key];
+	    } else {
+		    $value = $default;
+	    }
+	    return sprintf( '<p>'
+	                  . '<label for="%s"><strong>%s</strong></label>'
+	                  . '<input class="'.$class.'" id="%s" name="%s" type="text" value="%s" />'
+	                  . $description.'</p>',
+		    $this->get_field_id( $key ),
+		    _e( $title?:$key ),
+		    $this->get_field_id( $key ),
+		    $this->get_field_name( $key ),
+		    esc_attr( $value ) );
     }
 
 

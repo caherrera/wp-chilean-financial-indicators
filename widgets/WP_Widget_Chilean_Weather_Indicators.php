@@ -64,4 +64,5 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators
     }
 
 
+
 }
