@@ -84,7 +84,7 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
         }
         try {
             if (ini_get('allow_url_fopen')) {
-                $json = @file_get_contents($apiUrl);
+                $json = file_get_contents($apiUrl);
             } else {
                 // De otra forma utilizamos cURL
                 $curl = curl_init($apiUrl);

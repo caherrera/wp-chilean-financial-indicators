@@ -39,8 +39,8 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators
 
     public function widget($args, $instance)
     {
-        $this->apiUrl = sprintf($this->apiUrl, $this->city, $instance['api'] ?: '631bfe41f6f68a1642e75ded0751ec31',
-            $instance['lang'] ?: 'es');
+	    $instance = wp_parse_args( $instance, [ 'api' => '631bfe41f6f68a1642e75ded0751ec31', 'lang' => 'es' ] );
+        $this->apiUrl = sprintf($this->apiUrl, $this->city, $instance['api'] ,$instance['lang']);
         echo '<div class="WP_Widget_Chilean_Indicators WP_Widget_Chilean_Weather_Indicators">';
         echo '<ul>';
         echo $this->printWeather();
