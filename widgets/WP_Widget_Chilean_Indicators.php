@@ -44,7 +44,7 @@ class WP_Widget_Chilean_Indicators extends WP_Widget
 
     }
 
-	public function getCacheKey() {
+	public function getCacheKey($sufix = '') {
 
 		$json = json_encode( $this->instance );
 

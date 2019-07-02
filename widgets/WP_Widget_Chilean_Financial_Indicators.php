@@ -63,6 +63,19 @@ class WP_Widget_Chilean_Financial_Indicators extends WP_Widget_Chilean_Indicator
 
     }
 
+	/**
+	 * @param string $key
+	 * @param int $value
+	 * @param string $label
+	 *
+	 * @return string
+	 */
+	protected function printValue($key, $value, $label = null)
+	{
+
+		return sprintf("<li class=\"%s\"><span class=\"unit\">%s</span> $ %s</li>", $key, $label, number_format($value,2,',','.'));
+	}
+
     public function form($instance)
     {
         parent::form($instance);

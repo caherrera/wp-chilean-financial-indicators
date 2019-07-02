@@ -8,17 +8,16 @@
 
 class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators
 {
-    public $apiUrl = 'http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&units=metric&lang=%s';
+    public $apiUrl = 'http://api.openweathermap.org/data/2.5/weather?q=%s,CL&appid=%s&units=metric&lang=%s';
     public $city;
     public $expire = 3600;
 
     public function __construct()
     {
-
         $this->city = function_exists('bp_get_profile_field_data') && bp_get_profile_field_data(array(
             'field'   => 'Location',
             'user_id' => get_current_user_id()
-        )) ?: 'Santiago, Chile';
+        )) ?: 'Santiago';
         parent::__construct(
             'chilean-weather-indicators', //ID
             'Chilean Weather Indicators', //Nombre
@@ -31,10 +30,10 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators
 
     public function getCacheKey($sufix = '')
     {
-        preg_match("/(.+), (.+)/", $this->city, $match);
-        $sufix = $match[2] . '_' . $match[1] . '_' . $sufix;
+//        preg_match("/(.+), (.+)/", $this->city, $match);
+//        $sufix = $match[2] . '_' . $match[1] . '_' . $sufix;
 
-        return $sufix;
+        return $this->city.'_'.$sufix;
     }
 
     public function widget($args, $instance)
@@ -53,7 +52,7 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators
     {
         $key   = 'weather';
         $label = $this->city;
-        $value = ',' . $this->data()->main->temp . '°C ' . $this->data()->weather[0]->description;
+        $value = ' ' . $this->data()->main->temp . '°C ' . $this->data()->weather[0]->description;
 
         return $this->printValue($key, $value, $label);
     }
