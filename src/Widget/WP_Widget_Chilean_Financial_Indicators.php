@@ -1,4 +1,5 @@
 <?php
+namespace ChileanIndicator\Widget;
 /**
  * Created by PhpStorm.
  * User: carlosherrera
