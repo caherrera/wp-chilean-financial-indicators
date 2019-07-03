@@ -14,21 +14,22 @@
 
         base.init = function () {
             base.$el.addClass('jquery-chileanIndicators');
-            base.weather= base.$el.find('>li.weather');
+            base.weather = base.$el.find('li');
+            setInterval(base.weatherForecast, 1000 * 60 * 10);
+            base.weatherForecast();
         };
 
-        base.weatherForecast = function (city) {
+        base.weatherForecast = function () {
             $.get(
                 base.ajaxurl,
-                {'action': 'wp_chilean_financial_indicators', 'data': {'widget': base.widget,'city':city}}).done(function (data) {
+                {'action': 'wp_chilean_financial_indicators', 'data': {'widget': base.widget}}).done(function (data) {
                 base.data = data;
                 base.draw();
             });
         };
 
         base.draw = function () {
-            base.$box.html(base.drawList(base.members));
-            base.show();
+            base.weather.html(base.data);
         }
 
         // Run initializer
@@ -36,35 +37,16 @@
     };
 
 
-    $.fn.branches = function () {
+    $.fn.chileanWeather = function () {
         return this.each(function () {
-            (new $.branches(this));
+            (new $.chileanWeather(this));
         });
     };
 
-    $.fn.hideBranch = function () {
-        return this.each(function () {
-            var branch = $(this).data('branches');
-            if (branch instanceof Object) {
-                branch.hide();
-            }
 
-        });
-    };
 
 })(jQuery);
-//
-// if (jQuery('.pods_branch').length) {
-//     jQuery('.pods_branch').branches();
-//     setTimeout(function () {
-//         jQuery('.pods_branch .flexslider').each(function () {
-//             var $this = jQuery(this);
-//             if ($this.find('li>img').length > 1) {
-//                 $this.flexslider({});
-//                 $this.flexslider('pause');
-//             }else{
-//                 $this.removeClass('flexslider');
-//             }
-//         });
-//     }, 1000);
-// }
+
+jQuery(document).ready(function () {
+    jQuery('.WP_Widget_Chilean_Weather_Indicators').chileanWeather();
+});

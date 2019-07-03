@@ -28,7 +28,7 @@ class ApiFinancial extends Api {
 	 *
 	 * @return string
 	 */
-	protected function printValue( $key, $value, $label = null ) {
+	public function printValue( $key, $value, $label = null ) {
 
 		return sprintf( "<li class=\"%s\"><span class=\"unit\">%s</span> $ %s</li>", $key, $label, number_format( $value, 2, ',', '.' ) );
 	}

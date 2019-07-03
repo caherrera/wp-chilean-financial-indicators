@@ -15,6 +15,7 @@ if ( ! $WP_Chilean_Financial_Indicators instanceof ChileanIndicator\Init ) {
 
 	try {
 		$WP_Chilean_Financial_Indicators = ChileanIndicator\Init::factory();
+		$WP_Chilean_Financial_Indicators->setDir( plugin_dir_url( __FILE__ ) );
 	} catch ( Exception $e ) {
 		wp_die( $e->getMessage() );
 	}

@@ -21,7 +21,7 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators 
 			'field'   => 'Location',
 			'user_id' => get_current_user_id()
 		) ) ?: 'Santiago';
-		$this->api  = new ApiWeather( $this->city );
+		$this->api  = new ApiWeather( [ 'city' => $this->city ] );
 		parent::__construct(
 			'chilean-weather-indicators', //ID
 			'Chilean Weather Indicators', //Nombre
@@ -42,7 +42,7 @@ class WP_Widget_Chilean_Weather_Indicators extends WP_Widget_Chilean_Indicators 
 
 		echo '<div class="WP_Widget_Chilean_Indicators WP_Widget_Chilean_Weather_Indicators">';
 		echo '<ul>';
-		echo $this->api->printWeather();
+		echo $this->api->printValue('weather','','');
 		echo '</ul>';
 		echo '</div>';
 
