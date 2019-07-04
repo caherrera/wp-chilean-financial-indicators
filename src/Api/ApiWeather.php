@@ -13,7 +13,7 @@ class ApiWeather extends Api {
 	public $city;
 	public $key;
 	public $lang;
-	public $expire = 3600;
+	public $expire = 360;
 
 	public function __construct( $obj ) {
 		if ( is_object( $obj ) ) {
@@ -23,7 +23,7 @@ class ApiWeather extends Api {
 			'city'   => '',
 			'key'    => '',
 			'lang'   => '',
-			'expire' => '',
+			'expire' => '1000',
 		] );
 		$this->city   = $obj['city'];
 		$this->key    = $obj['key'];

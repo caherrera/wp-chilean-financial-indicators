@@ -10,7 +10,7 @@ namespace ChileanIndicator\Api;
 
 class ApiFinancial extends Api {
 	public $apiUrl = 'http://api.sbif.cl/api-sbifv3/recursos_api/[recurso]?apikey=[apikey]&formato=json';
-	public $expire = 86400;
+	public $expire = 21600;
 
 
 	public function printUF() {

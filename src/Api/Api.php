@@ -11,7 +11,7 @@ namespace ChileanIndicator\Api;
 class Api {
 	public $apiUrl = 'http://indicadoresdeldia.cl/webservice/indicadores.json';
 	public $data = null;
-	public $expire = 0;
+	public $expire = 3600;
 	public $instance;
 
 	public function __construct( ) {
